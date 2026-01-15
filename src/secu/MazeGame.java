@@ -1,0 +1,434 @@
+package secu;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class MazeGame extends JFrame {
+    int[][] maze;
+    GamePanel gamePanel;
+
+    // 플레이어 객체로 변경
+    Player player1;
+    Player player2;  // AI
+
+    // 타이머들
+    Timer trapTimer;
+    Timer gameTimer;      // 게임 시간 측정
+    Timer aiTimer;        // AI 자동 이동
+    Timer itemTimer;
+
+    int gameSeconds = 0;  // 경과 시간
+    int aiGameSeconds = 0;
+
+
+
+    public MazeGame(int[][] mazeData){
+        this.maze = mazeData;
+
+        setTitle("미로 찾기 게임");
+        setSize(600, 800);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        initPlayers();    // 플레이어 2명 초기화
+        initTimers();     // 타이머 초기화
+
+        gamePanel = new GamePanel();
+        add(gamePanel);
+
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                handleKeyPress(e.getKeyCode());
+            }
+        });
+
+        // 게임 시작!
+        gameTimer.start();
+        aiTimer.start();
+
+        setVisible(true);
+    }
+
+    // 플레이어 2명 초기화
+    void initPlayers(){
+        int startCount = 0;
+
+        for (int i = 0; i < maze.length; i++) {
+            for (int j = 0; j < maze[i].length; j++) {
+                if (maze[i][j] == 0) {
+                    if (startCount == 0) {
+                        // 첫 번째 스타트 지점 → 플레이어1
+                        player1 = new Player(i, j, 1);
+                        maze[i][j] = 1;
+                        startCount++;
+                    } else if (startCount == 1) {
+                        // 두 번째 스타트 지점 → 플레이어2 (AI)
+                        player2 = new Player(i, j, 2);
+                        maze[i][j] = 2;
+                        startCount++;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    // 타이머 초기화
+    void initTimers() {
+        // 게임 시간 타이머 (1초마다)
+        gameTimer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameSeconds++;
+                System.out.println("게임 시간: " + gameSeconds + "초");
+            }
+        });
+
+        // AI 이동 타이머 (0.5초마다)
+        aiTimer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                aiGameSeconds++;
+                if (!player2.isArrived()) {
+                    moveAI();  // AI 자동 이동
+                    gamePanel.repaint();
+                }
+            }
+        });
+
+        trapTimer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean anyActive = false;
+
+                if(player1.isHastrap()){
+                    player1.setTrapcountdown(player1.getTrapcountdown()-1);
+                    System.out.println("P1 트랩해제까지 남은 시간: " + player1.getItemTimeLeft());
+
+                    if (player1.getTrapcountdown() <= 0) {
+                        player1.setHastrap(false);
+                        System.out.println("P1 트랩헤제");
+                    } else {
+                        anyActive = true;
+                    }
+                }
+
+                if(player2.isHastrap()){
+                    player2.setTrapcountdown(player2.getTrapcountdown()-1);
+                    System.out.println("P2 트랩해제까지 남은 시간: " + player2.getItemTimeLeft());
+
+                    if (player2.getTrapcountdown() <= 0) {
+                        player2.setHastrap(false);
+                        System.out.println("P2 트랩헤제");
+                    } else {
+                        anyActive = true;
+                    }
+                }
+
+                // 둘 다 효과 없으면 타이머 정지
+                if (!anyActive) {
+                    trapTimer.stop();
+                }
+
+                gamePanel.repaint();
+
+
+            }
+        });
+
+        itemTimer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean anyActive = false;
+
+                // 플레이어1 체크
+                if (player1.isItemActive()) {
+                    player1.setItemTimeLeft(player1.getItemTimeLeft() - 1);
+                    System.out.println("P1 아이템 남은 시간: " + player1.getItemTimeLeft());
+
+                    if (player1.getItemTimeLeft() <= 0) {
+                        player1.setItemActive(false);
+                        player1.setVisionRange(1);
+                        System.out.println("P1 아이템 효과 종료!");
+                    } else {
+                        anyActive = true;
+                    }
+                }
+
+                // 플레이어2(AI) 체크
+                if (player2.isItemActive()) {
+                    player2.setItemTimeLeft(player2.getItemTimeLeft() - 1);
+                    System.out.println("P2 아이템 남은 시간: " + player2.getItemTimeLeft());
+
+                    if (player2.getItemTimeLeft() <= 0) {
+                        player2.setItemActive(false);
+                        player2.setVisionRange(1);
+                        System.out.println("P2 아이템 효과 종료!");
+                    } else {
+                        anyActive = true;
+                    }
+                }
+
+                // 둘 다 효과 없으면 타이머 정지
+                if (!anyActive) {
+                    itemTimer.stop();
+                }
+
+                gamePanel.repaint();
+            }
+
+        });
+    }
+
+    // AI 이동 로직 (일단 랜덤으로)
+    void moveAI() {
+        // 랜덤 방향 선택
+        int direction = (int)(Math.random() * 4);
+        int newRow = player2.getRow();
+        int newCol = player2.getCol();
+
+        switch(direction) {
+            case 0: newRow--; break;  // 위
+            case 1: newRow++; break;  // 아래
+            case 2: newCol--; break;  // 왼쪽
+            case 3: newCol++; break;  // 오른쪽
+        }
+
+        // 이동 가능한지 체크
+        if (canMove(newRow, newCol)) {
+
+            if (maze[newRow][newCol] == 6) {
+                activateItem(player2);  // 아이템 효과 발동
+            }
+
+            // 현재 위치를 길로
+            maze[player2.getRow()][player2.getCol()] = 3;
+
+            // 새 위치로 이동
+            player2.setRow(newRow);
+            player2.setCol(newCol);
+
+            // 도착 체크
+            if (maze[newRow][newCol] == 9) {
+                player2.setArrived(true);
+                player2.setFinishTime(gameSeconds);
+                System.out.println("AI도착: "+aiTimer+"초");
+                aiTimer.stop();
+                checkGameEnd();
+                return;
+            }
+
+            // 새 위치를 플레이어2로
+            maze[newRow][newCol] = 2;
+        }
+    }
+
+    // 플레이어1 키보드 입력 처리
+    void handleKeyPress(int keyCode) {
+        if (player1.isArrived()) return;  // 이미 도착했으면 무시
+        if (player1.isHastrap()) return; //트랩에 걸린 상태면 무시
+
+        int newRow = player1.getRow();
+        int newCol = player1.getCol();
+
+        switch (keyCode) {
+            case KeyEvent.VK_UP:
+            case KeyEvent.VK_W:
+                newRow--;
+                break;
+            case KeyEvent.VK_DOWN:
+            case KeyEvent.VK_S:
+                newRow++;
+                break;
+            case KeyEvent.VK_LEFT:
+            case KeyEvent.VK_A:
+                newCol--;
+                break;
+            case KeyEvent.VK_RIGHT:
+            case KeyEvent.VK_D:
+                newCol++;
+                break;
+            case KeyEvent.VK_R:
+                activateItem(player2);
+                break;
+            default:
+                return;
+        }
+
+        if(canMove(newRow, newCol)){
+
+            if (maze[newRow][newCol] == 6) {
+                activateItem(player1);  // player1만!
+            }
+
+            maze[player1.getRow()][player1.getCol()] = 3;
+
+            player1.setRow(newRow);
+            player1.setCol(newCol);
+
+            if(maze[newRow][newCol] == 9){
+                player1.setArrived(true);
+                player1.setFinishTime(gameSeconds);
+                JOptionPane.showMessageDialog(this, "플레이어1 도착 시간: "+ gameSeconds);
+                checkGameEnd();
+                return;
+            }
+
+            maze[newRow][newCol] = 1;
+            gamePanel.repaint();
+        }
+    }
+
+    // 게임 종료 체크
+    void checkGameEnd() {
+        if (player1.isArrived() && player2.isArrived()) {
+            gameTimer.stop();
+            aiTimer.stop();
+
+            String message = "게임 종료!\n\n";
+            message += "플레이어1 시간: " + player1.getFinishTime() + "초\n";
+            message += "플레이어2(AI) 시간: " + player2.getFinishTime() + "초\n\n";
+
+            if (player1.getFinishTime() < player2.getFinishTime()) {
+                message += "플레이어1 승리! 🎉";
+            } else if (player1.getFinishTime() > player2.getFinishTime()) {
+                message += "플레이어2(AI) 승리! 🤖";
+            } else {
+                message += "무승부!";
+            }
+            this.dispose();
+            new EndScreen(gameSeconds);
+
+            JOptionPane.showMessageDialog(this, message);
+        }
+    }
+
+    boolean canMove(int row, int col){
+        if (row < 0 || row >= maze.length || col < 0 || col >= maze[0].length) {
+            return false;
+        }
+
+        if (maze[row][col] == 4) {
+            return false;
+        }
+
+        // 다른 플레이어와 충돌 방지
+        if (maze[row][col] == 1 || maze[row][col] == 2) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    void activeTrap(Player player){
+        System.out.println("트랩을 밟았어요");
+
+        player.hastrap = true;
+        player.trapcountdown = 5;
+
+        if (!trapTimer.isRunning()){
+            trapTimer.start();
+        }
+    }
+
+    void activateItem(Player player){
+        System.out.println("아이템 획득");
+
+        player.hasItem = true;
+        player.countdown =5;
+        player.range = 2;
+
+        if (!itemTimer.isRunning()) {
+            itemTimer.start();
+        }
+    }
+
+    boolean isInFogRange(int row, int col, Player player) {
+        int rowDiff = Math.abs(row - player.getRow());
+        int colDiff = Math.abs(col - player.getCol());
+        return rowDiff <= player.getVisionRange() && colDiff <= player.getVisionRange();
+    }
+
+    class GamePanel extends JPanel{
+        final int CELL_SIZE = 50;
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+
+            for (int i = 0; i < maze.length; i++) {
+                for (int j = 0; j < maze[i].length; j++) {
+                    int x = j * CELL_SIZE;
+                    int y = i * CELL_SIZE;
+
+                    boolean isVisible = isInFogRange(i, j, player1)
+                            || isInFogRange(i, j, player2);
+
+                    if(!isVisible){
+                        g.setColor(new Color(100, 100, 100));
+                        g.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+                        g.setColor(Color.GRAY);
+                        g.drawRect(x, y, CELL_SIZE, CELL_SIZE);
+                        g.setColor(Color.WHITE);
+                        g.setFont(new Font("맑은 고딕", Font.BOLD, 20));
+                        g.drawString("?", x + 18, y + 32);
+                    } else {
+                        switch (maze[i][j]) {
+                            case 0: g.setColor(Color.GREEN); break;//시작지점
+                            case 1: g.setColor(Color.BLUE); break;// 플레이어1
+                            case 2: g.setColor(Color.ORANGE); break;// 플레이어2 (AI)
+                            case 3: g.setColor(Color.WHITE); break; //길
+                            case 4: g.setColor(Color.BLACK); break;//벽
+                            case 6: g.setColor(Color.YELLOW); break;//아이템
+                            case 9: g.setColor(Color.RED); break;//도착
+                            default: g.setColor(Color.GRAY);
+                        }
+
+                        g.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+                        g.setColor(Color.GRAY);
+                        g.drawRect(x, y, CELL_SIZE, CELL_SIZE);
+                    }
+                }
+            }
+//            반투명 배경
+            g.setColor(new Color(0, 0, 0, 150));
+            g.fillRect(500, 10, 200, 200);
+            //테두리
+            g.setColor(Color.WHITE);
+            g.drawRect(500, 10, 200, 200);
+
+            // 시간 텍스트
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+            g.drawString("게임 시간: " + gameSeconds + "초", 510, 25);
+
+            // 플레이어 상태
+            g.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
+            String status = "플레이어1: " + (player1.isArrived() ? "도착!" : "진행중");
+            g.drawString(status, 510, 45);
+
+            if (player1.isItemActive()) {
+                g.setColor(Color.YELLOW);
+                g.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+                g.drawString("P1 아이템: " + player1.getItemTimeLeft() + "초", 510, 75);
+            }
+            // 시간 텍스트
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+            g.drawString("게임 시간: " + aiGameSeconds + "초", 510, 85);
+
+            // 플레이어 상태
+            g.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
+            String status2 = "플레이어1: " + (player2.isArrived() ? "도착!" : "진행중");
+            g.drawString(status, 510, 100);
+
+        }
+
+    }
+}
