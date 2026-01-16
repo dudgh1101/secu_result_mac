@@ -10,7 +10,7 @@ public class MazeLoader {
 
     /**
      * 텍스트 파일에서 미로를 읽어옵니다
-     * D:\workspace_level3\maze.txt
+     * D:\secu_extend\secu_exten\src\secu\maze.txt
      2
      *
      */

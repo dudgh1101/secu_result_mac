@@ -265,6 +265,9 @@ public class MazeGame extends JFrame {
             if (maze[newRow][newCol] == 6) {
                 activateItem(player1);  // player1만!
             }
+            if (maze[newRow][newCol] == 5) {
+                activeTrap(player1);  // player1만!
+            }
 
             maze[player1.getRow()][player1.getCol()] = 3;
 
@@ -385,6 +388,7 @@ public class MazeGame extends JFrame {
                             case 2: g.setColor(Color.ORANGE); break;// 플레이어2 (AI)
                             case 3: g.setColor(Color.WHITE); break; //길
                             case 4: g.setColor(Color.BLACK); break;//벽
+                            case 5: g.setColor(Color.GREEN); break;
                             case 6: g.setColor(Color.YELLOW); break;//아이템
                             case 9: g.setColor(Color.RED); break;//도착
                             default: g.setColor(Color.GRAY);
@@ -418,15 +422,20 @@ public class MazeGame extends JFrame {
                 g.setFont(new Font("맑은 고딕", Font.BOLD, 14));
                 g.drawString("P1 아이템: " + player1.getItemTimeLeft() + "초", 510, 75);
             }
+            if(player1.isHastrap()){
+                g.setColor(Color.YELLOW);
+                g.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+                g.drawString("P1 트랩헤제까지: " + player1.getTrapcountdown() + "초", 510, 85);
+            }
             // 시간 텍스트
             g.setColor(Color.WHITE);
             g.setFont(new Font("맑은 고딕", Font.BOLD, 18));
-            g.drawString("게임 시간: " + aiGameSeconds + "초", 510, 85);
+            g.drawString("게임 시간: " + aiGameSeconds + "초", 510, 105);
 
             // 플레이어 상태
             g.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
             String status2 = "플레이어1: " + (player2.isArrived() ? "도착!" : "진행중");
-            g.drawString(status, 510, 100);
+            g.drawString(status, 510, 10);
 
         }
 
