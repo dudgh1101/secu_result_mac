@@ -58,8 +58,8 @@ public class MenuScreen extends JFrame {
                 MazeGenerator generator = new MazeGenerator();
                 int[][] maze = generator.generateMaze(size);
 
-                Generator generator1 = new Generator(size,size,100);
-                maze = generator1.newGenerator();
+//                Generator generator1 = new Generator(size,size,100);
+//                maze = generator1.newGenerator();
 
                 // 게임 시작
                 this.dispose();  // 메뉴 화면 닫기
