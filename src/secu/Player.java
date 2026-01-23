@@ -16,12 +16,15 @@ public class Player {
     int trapcountdown = 0;
     boolean hastrap = false;
 
+    private int diraction;
+
     public Player(int row, int col, int playerNumber) {
         this.row = row;
         this.col = col;
         this.playerNumber = playerNumber;
         this.arrived = false;
         this.finishTime = 0;
+        this.diraction=1;
     }
 
     // Getter & Setter
@@ -58,4 +61,13 @@ public class Player {
     public int getVisionRange() { return range; }
     public void setVisionRange(int range) { this.range = range; }
 
+    
+    //방향
+    public int getDiraction() {
+        return diraction;
+    }
+
+    public void setDiraction(int diraction) {
+        this.diraction = diraction;
+    }
 }

@@ -24,8 +24,12 @@ public class Generator extends JFrame {
     //트랩
     private int trapPlaced = 0;
     private int trapAttempts = 0;
-
-
+    //시작지점
+    private int startPlaced = 0;
+    private int startAttempts = 0;
+    //종료 지점
+    private int endPlaced = 0;
+    private int endAttempts = 0;
 
     private final Container container = getContentPane();
     private final JPanel[][] cells;
@@ -51,14 +55,13 @@ public class Generator extends JFrame {
         setSize(cols * cellSize, rows * cellSize);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setVisible(true);
+        setVisible(false);
         init();
         generateMaze();
     }
 
     public int[][] newGenerator(){
         return testMaze;
-
     }
 
     private void init() {
@@ -105,11 +108,11 @@ public class Generator extends JFrame {
     }
 
     private void generateMaze() {
-        paintCellAndRefresh(0, 0, Color.RED); // 시작점 표시 (빨간색)
         dfs(0, 0); // DFS 알고리즘으로 미로 생성
+        placeStart(testMaze,rows,2);
         placeItems(testMaze,rows,3);
         placeTrap(testMaze,rows,3);
-        paintCellAndRefresh(rows - 2, cols - 2, Color.GREEN); // 도착점 표시 (초록색)
+        paintCellAndRefresh(rows - 2, cols - 2, Color.RED); // 도착점 표시 (초록색)
     }
 
     private void dfs(int x, int y) {
@@ -124,28 +127,29 @@ public class Generator extends JFrame {
                 nx, ny를 2칸 다음의 칸으로 설정하여 벽이 없어지는 것을 방지
              */
 
-int nx = x + direction[0] * 2;
-int ny = y + direction[1] * 2;
+        int nx = x + direction[0] * 2;
+        int ny = y + direction[1] * 2;
 
-            if (nx >= 0 && nx < rows && ny >= 0 && ny < cols && !maze[nx][ny]) {
-maze[nx][ny] = true;
-maze[x + direction[0]][y + direction[1]] = true;
+        if (nx >= 0 && nx < rows && ny >= 0 && ny < cols && !maze[nx][ny]) {
+            maze[nx][ny] = true;
+            maze[x + direction[0]][y + direction[1]] = true;
 
-        try {
-        Thread.sleep(1); // 미로가 생성되는 속도를 조절
-                } catch (InterruptedException e) {
-        e.printStackTrace();
+            try {
+                Thread.sleep(1); // 미로가 생성되는 속도를 조절
                 }
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
 // 2칸 떨어진 다음 칸과 그 사이 칸을 칠함
-paintCellAndRefresh(nx, ny, Color.WHITE);
-paintCellAndRefresh(x + direction[0], y + direction[1], Color.WHITE);
+            paintCellAndRefresh(nx, ny, Color.WHITE);
+            paintCellAndRefresh(x + direction[0], y + direction[1], Color.WHITE);
 
-                for (int row = 0; row < rows; row++) {
-        for (int col = 0; col < cols; col++) {
-        System.out.print(testMaze[row][col]);
-                    }
-                            System.out.println();
+            for (int row = 0; row < rows; row++) {
+                for (int col = 0; col < cols; col++) {
+                    System.out.print(testMaze[row][col]);
+                }
+                System.out.println();
                 }
 
 
@@ -156,7 +160,7 @@ paintCellAndRefresh(x + direction[0], y + direction[1], Color.WHITE);
 
     private void placeItems(int[][] maze, int size, int count) {
 
-        while (placed < count && attempts < 100) {
+        while (placed < count && attempts < rows*cols) {
             int x = 1 + random.nextInt(size - 2);
             int y = 1 + random.nextInt(size - 2);
 
@@ -168,11 +172,41 @@ paintCellAndRefresh(x + direction[0], y + direction[1], Color.WHITE);
             attempts++;
         }
     }
+    private void placeStart(int[][] maze, int size, int count) {
+
+        while (startPlaced < count && startAttempts < rows*cols) {
+            int x = 1 + random.nextInt(size - 2);
+            int y = 1 + random.nextInt(size - 2);
+
+            if (maze[x][y] == 3) {  // 길 위에만 배치
+                maze[x][y] = 0;  // 시작
+                paintCellAndRefresh(x, y, Color.GREEN);
+                System.out.println("시작지점 배치");
+                startPlaced++;
+            }
+            startAttempts++;
+        }
+    }
+    private void placeEnd(int[][] maze, int size, int count) {
+
+        while (endPlaced < count && endAttempts < rows*cols) {
+            int x = 1 + random.nextInt(size - 2);
+            int y = 1 + random.nextInt(size - 2);
+
+            if (maze[x][y] == 3) {  // 길 위에만 배치
+                maze[x][y] = 0;  // 시작
+                paintCellAndRefresh(x, y, Color.RED);
+                System.out.println("도착지점 배치");
+                endPlaced++;
+            }
+            endAttempts++;
+        }
+    }
 
     private void placeTrap(int[][] maze, int size, int count) {
 
 
-        while (trapPlaced < count && trapAttempts < 100) {
+        while (trapPlaced < count && trapAttempts < rows*cols) {
             int x = 1 + random.nextInt(size - 2);
             int y = 1 + random.nextInt(size - 2);
 
@@ -209,9 +243,9 @@ public void paint(Graphics g) {
     super.paint(g);
 }
 
-public static void main(String[] args) {
-    Generator generator = new Generator(20, 20, 100);
-    System.out.println("testMaze");
-    generator.printMaze();
-    }
+//public static void main(String[] args) {
+//    Generator generator = new Generator(20, 20, 100);
+//    System.out.println("testMaze");
+//    generator.printMaze();
+//    }
 }
