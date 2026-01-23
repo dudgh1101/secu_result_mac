@@ -10,8 +10,8 @@ public class MazeLoader {
 
     /**
      * 텍스트 파일에서 미로를 읽어옵니다
-     * D:\secu_extend\secu_exten\src\secu\maze.txt
-     2
+     *
+     2 D:\secu_extend\secu_exten\src\secu\maze.txt
      *
      */
     public static int[][] loadFromFile(String filePath) throws IOException {

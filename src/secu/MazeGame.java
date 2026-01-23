@@ -191,16 +191,7 @@ public class MazeGame extends JFrame {
         int direction = (int)(Math.random() * 4);
         int newRow = player2.getRow();
         int newCol = player2.getCol();
-//        int[][] directions = {
-//                {1, 0},  // Down
-//                {0, 1},  // Right
-//                {-1, 0}, // Up
-//                {0, -1}  // Left
-//        };
-//        for(int[] dis : directions){
-//           newRow+=dis[0];
-//           newCol+=dis[1];
-//        }
+
         switch(direction) {
             case 0: newRow--; break;  // 위
             case 1: newRow++; break;  // 아래
@@ -394,11 +385,11 @@ public class MazeGame extends JFrame {
                     } else {
                         switch (maze[i][j]) {
                             case 0: g.setColor(Color.GREEN); break;//시작지점
-                            case 1: g.setColor(Color.BLUE); break;// 플레이어1
+                            case 1: g.setColor(Color.BLUE);break;// 플레이어1
                             case 2: g.setColor(Color.ORANGE); break;// 플레이어2 (AI)
                             case 3: g.setColor(Color.WHITE); break; //길
                             case 4: g.setColor(Color.BLACK); break;//벽
-                            case 5: g.setColor(Color.GREEN); break;
+                            case 5: g.setColor(Color.GREEN); break; //덫
                             case 6: g.setColor(Color.YELLOW); break;//아이템
                             case 9: g.setColor(Color.RED); break;//도착
                             default: g.setColor(Color.GRAY);
