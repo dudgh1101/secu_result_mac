@@ -37,6 +37,8 @@ public class MenuScreen extends JFrame {
         exitBtn.addActionListener(e -> System.exit(0));
         add(exitBtn);
 
+
+
         setVisible(true);
     }
 
