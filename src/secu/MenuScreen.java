@@ -4,6 +4,7 @@ package secu;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class MenuScreen extends JFrame {
 
@@ -31,7 +32,14 @@ public class MenuScreen extends JFrame {
         newFileBtn.addActionListener(e -> loadFromFile());
         add(newFileBtn);
 
-        // 버튼 2: 종료
+        //버튼 3: 리플레이 보러가기
+
+        JButton replayButton = new JButton("리플레이");
+        replayButton.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
+        replayButton.addActionListener(e -> startReplayButton());
+        add(replayButton);
+
+        // 버튼 4: 종료
         JButton exitBtn = new JButton("종료");
         exitBtn.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         exitBtn.addActionListener(e -> System.exit(0));
@@ -71,6 +79,10 @@ public class MenuScreen extends JFrame {
         }
     }
 
+    void startReplayButton(){
+        new ReplayScreen();
+    }
+
     //파일에서 불러오기버튼
     void loadFromFile() {
         String filePath = JOptionPane.showInputDialog(this,
@@ -90,6 +102,7 @@ public class MenuScreen extends JFrame {
             }
         }
     }
+
 
     public static void main(String[] args) {
         new MenuScreen();

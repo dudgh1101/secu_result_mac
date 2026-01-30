@@ -8,7 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 public class MazeGame extends JFrame {
     int[][] maze;
@@ -27,6 +29,14 @@ public class MazeGame extends JFrame {
     int gameSeconds = 0;  // 경과 시간
     int aiGameSeconds = 0;
 
+    //리플레이를 위한 버퍼 and 파일을 저장할 경로
+    private final StringBuffer buffer = new StringBuffer();
+    private final String path = "D:\\secu_extend\\secu_exten\\src\\secu\\all_log\\game_save";
+    private int file_count = 2;
+    private final String txt = ".txt";
+    private  Path filePath = Paths.get(path + txt);
+
+
     final int[][] directions = {
             {-1, 0},  // UP 0
             {0, 1},   // RIGHT 1
@@ -39,6 +49,7 @@ public class MazeGame extends JFrame {
 
     public MazeGame(int[][] mazeData){
         this.maze = mazeData;
+        inputBuffer(mazeData);
 
         setTitle("미로 찾기 게임");
         setSize(600, 800);
@@ -63,6 +74,23 @@ public class MazeGame extends JFrame {
         aiTimer.start();
 
         setVisible(true);
+    }
+
+    void inputBuffer(int[][] maze){
+        buffer.append(maze.length);
+        for (int i = 0; i < maze.length; i++) {
+            for (int j = 0; j < maze[i].length; j++) {
+                buffer.append(maze[i][j]);
+                System.out.print(maze[i][j]);
+            }
+            System.out.println();
+        }
+
+        buffer.append("e");
+    }
+
+    void chekFile(Path file){
+
     }
 
     // 플레이어 2명 초기화
@@ -356,19 +384,23 @@ public class MazeGame extends JFrame {
             } else {
                 message += "무승부!";
             }
+
+            buffer.append(pr_buffer.toString());
+            buffer.append(ai_buffer.toString());
+
+
+            while (Files.exists(filePath)){
+                filePath = Paths.get(path + file_count + txt);
+                file_count++;
+            }
+
             try {
-                Files.writeString(Paths.get("D:\\secu_extend\\secu_exten\\src\\secu\\all_log\\test_prLog.txt"),pr_buffer.toString());
+                Files.writeString(filePath,buffer.toString());
 
             }catch (Exception e){
                 System.out.println(e.getMessage());
             }
 
-            try {
-                Files.writeString(Paths.get("D:\\secu_extend\\secu_exten\\src\\secu\\all_log\\test_aiLog.txt"),ai_buffer.toString());
-
-            }catch (Exception e){
-                System.out.println(e.getMessage());
-            }
 
             this.dispose();
             new EndScreen(gameSeconds);
