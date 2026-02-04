@@ -404,7 +404,7 @@ public class MazeGame extends JFrame {
 
 
             this.dispose();
-            new EndScreen(gameSeconds);
+            new EndScreen(gameSeconds,aiGameSeconds);
 
             JOptionPane.showMessageDialog(this, message);
         }
