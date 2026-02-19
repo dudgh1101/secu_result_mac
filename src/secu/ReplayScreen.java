@@ -9,10 +9,14 @@ import java.nio.file.Paths;
 public class ReplayScreen extends JFrame {
 
 
-    private String filePath = "D:\\secu_extend\\secu_exten\\src\\secu\\all_log\\";
-
-
+    // 플랫폼에 독립적인 경로 설정
+    private final String filePath;
+    
     public ReplayScreen() {
+        // 클래스 로더를 통한 리소스 경로 획득 (플랫폼 독립적)
+        String basePath = System.getProperty("user.dir");
+        this.filePath = basePath + "/secu_exten/src/secu/game_save/";
+        
         setTitle("리플레이 목록");
         setSize(400, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -64,7 +68,7 @@ public class ReplayScreen extends JFrame {
     // ReplayScreen.java 수정 (디버깅 버전)
 
     boolean hasReplayFiles() {
-        File dir = new File("D:\\secu_extend\\secu_exten\\src\\secu\\all_log");
+        File dir = new File(filePath);
         File[] files = dir.listFiles((d, name) -> name.startsWith("game_save") && name.endsWith(".txt"));
 
         // ✅ 디버깅: 찾은 파일 출력
@@ -82,7 +86,7 @@ public class ReplayScreen extends JFrame {
     }
 
     void showReplayList(JPanel panel) {
-        File dir = new File("D:\\secu_extend\\secu_exten\\src\\secu\\all_log\\");
+        File dir = new File(filePath);
         File[] files = dir.listFiles((d, name) -> name.startsWith("game_save") && name.endsWith(".txt"));
 
         // ✅ 디버깅: 찾은 파일 출력
@@ -119,7 +123,7 @@ public class ReplayScreen extends JFrame {
 //        JOptionPane.showMessageDialog(this, "리플레이 재생: " + fileName);
 //        JOptionPane.showMessageDialog(this, "리플레이 경로: " + filePath + fileName);
         this.dispose();
-        new MazeReGame(filePath+fileName);
+        new MazeReGame(filePath + fileName);
 //        -> all_loggame_save.txt라고 출려됨
         // 리플레이 재생 화면으로 이동
 

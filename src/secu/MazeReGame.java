@@ -49,6 +49,13 @@ public class MazeReGame extends JFrame {
         catch (Exception e){
             System.out.println(e.getMessage());
             System.out.println("파일 불러오기 실패");
+            JOptionPane.showMessageDialog(null, "리플레이 파일을 불러올 수 없습니다: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (this.maze == null) {
+            JOptionPane.showMessageDialog(null, "미로 데이터를 불러오지 못했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         setTitle("AI 미로찾기 테스트");
