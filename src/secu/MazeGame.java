@@ -535,24 +535,24 @@ public class MazeGame extends JFrame {
             g.drawRect(uiX, uiY, uiWidth, uiHeight);
 
             // 상태 텍스트
-            g.setFont(new Font("Arial", Font.BOLD, 14));
+            g.setFont(new Font("맑은 고딕", Font.BOLD, 14));
             int textX = uiX + 15;
             int textY = uiY + 25;
             int lineHeight = 20;
 
-            g.drawString("Player: " + gameSeconds + "s", textX, textY);
-            g.drawString("AI: " + aiGameSeconds + "s", textX, textY + lineHeight);
-            g.drawString("P1: " + (player1.isArrived() ? " Arrived!" : " Playing"), textX, textY + lineHeight * 2);
-            g.drawString("AI: " + (player2.isArrived() ? " Arrived!" : " Playing"), textX, textY + lineHeight * 3);
+            g.drawString("플레이어: " + gameSeconds + "초", textX, textY);
+            g.drawString("AI: " + aiGameSeconds + "초", textX, textY + lineHeight);
+            g.drawString("P1: " + (player1.isArrived() ? "도착!" : "진행중"), textX, textY + lineHeight * 2);
+            g.drawString("AI: " + (player2.isArrived() ? "도착!" : "진행중"), textX, textY + lineHeight * 3);
 
             if (player1.isItemActive()) {
                 g.setColor(Color.YELLOW);
-                g.drawString("Item: " + player1.getItemTimeLeft() + "s", textX, textY + lineHeight * 4);
+                g.drawString("아이템: " + player1.getItemTimeLeft() + "초", textX, textY + lineHeight * 4);
                 g.setColor(Color.WHITE);
             }
             if (player1.isHastrap()) {
                 g.setColor(Color.RED);
-                g.drawString("Trap: " + player1.getTrapcountdown() + "s", textX, textY + lineHeight * 5);
+                g.drawString("트랩: " + player1.getTrapcountdown() + "초", textX, textY + lineHeight * 5);
             }
         }
 
