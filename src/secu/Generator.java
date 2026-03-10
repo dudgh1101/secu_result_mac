@@ -55,7 +55,7 @@ public class Generator extends JFrame {
         setSize(cols * cellSize, rows * cellSize);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setVisible(false);
+        setVisible(true); //or true
         init();
         generateMaze();
     }
@@ -141,7 +141,7 @@ public class Generator extends JFrame {
                 e.printStackTrace();
             }
 
-// 2칸 떨어진 다음 칸과 그 사이 칸을 칠함
+            // 2칸 떨어진 다음 칸과 그 사이 칸을 칠함
             paintCellAndRefresh(nx, ny, Color.WHITE);
             paintCellAndRefresh(x + direction[0], y + direction[1], Color.WHITE);
 

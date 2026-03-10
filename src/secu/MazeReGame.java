@@ -76,12 +76,11 @@ public class MazeReGame extends JFrame {
 
     public void loadReplay(String fileName) throws IOException {
         try {
-            // ✅ 1. 파일 읽기 (한 줄로 저장되어 있다고 가정)
+
             String data = Files.readString(Paths.get(fileName));
 
             if(data.isEmpty()) throw new IOException("파일이 비어있습니다.");
 
-            // ✅ 2. 파싱
             String[] parts = data.split("e");
 
             // 파싱 테스트
@@ -89,12 +88,12 @@ public class MazeReGame extends JFrame {
                 System.out.println(de);
             }
 
-            // ✅ 3. 크기
+
             int size = Integer.parseInt(parts[0]);
             Csize = size;
 
 
-            // ✅ 4. 미로 배열
+
             int[][] mazeArray = new int[size][size];
             String mazeStr = parts[1];
             for (int i = 0; i < size; i++) {
@@ -104,7 +103,6 @@ public class MazeReGame extends JFrame {
             }
             this.maze = mazeArray;
 
-            // ✅ 5. 이동 배열
             char[] movesArrayP = parts[2].toCharArray();
             char[] movesArrayA = parts[3].toCharArray();
             aiMove = movesArrayA;

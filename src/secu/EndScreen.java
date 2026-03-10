@@ -18,6 +18,8 @@ public class EndScreen<E> extends JFrame {
         JButton exitBtn = new JButton("사용자의 시간 : "+second+"초  종료, ai시간 : "+ aiSecond);
         exitBtn.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
         exitBtn.addActionListener(e -> System.exit(0));
+
+
         add(exitBtn);
 
         setVisible(true);
@@ -25,5 +27,6 @@ public class EndScreen<E> extends JFrame {
     }
 
     public static void main(String[] args) {
+        EndScreen endScreen = new EndScreen("test","test");
     }
 }

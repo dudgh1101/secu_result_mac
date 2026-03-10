@@ -71,7 +71,7 @@ public class ReplayScreen extends JFrame {
         File dir = new File(filePath);
         File[] files = dir.listFiles((d, name) -> name.startsWith("game_save") && name.endsWith(".txt"));
 
-        // ✅ 디버깅: 찾은 파일 출력
+        //디렉토리 내에 파일 출력
         System.out.println("=== hasReplayFiles 결과 ===");
         if (files != null) {
             System.out.println("총 파일 개수: " + files.length);
@@ -89,7 +89,7 @@ public class ReplayScreen extends JFrame {
         File dir = new File(filePath);
         File[] files = dir.listFiles((d, name) -> name.startsWith("game_save") && name.endsWith(".txt"));
 
-        // ✅ 디버깅: 찾은 파일 출력
+        // 찾은 파일 개수 출력
         System.out.println("=== showReplayList 결과 ===");
         if (files != null) {
             System.out.println("총 파일 개수: " + files.length);
@@ -100,11 +100,15 @@ public class ReplayScreen extends JFrame {
             System.out.println("files가 null!");
         }
 
+
+
+
+
         if (files != null) {
             panel.add(Box.createVerticalStrut(10));
 
             for (File file : files) {
-                System.out.println("버튼 생성: " + file.getName());  // ✅ 추가
+                System.out.println("버튼 생성: " + file.getName());  // 추가
 
                 JButton fileButton = new JButton(file.getName());
                 fileButton.setFont(new Font("맑은 고딕", Font.PLAIN, 16));

@@ -21,10 +21,11 @@ public class MazeGame extends JFrame {
     Player player2;  // AI
 
     // 타이머들
-    Timer trapTimer;
+
     Timer gameTimer;      // 게임 시간 측정
     Timer aiTimer;        // AI 자동 이동
     Timer itemTimer;
+    Timer trapTimer;
 
     int gameSeconds = 0;  // 경과 시간
     int aiGameSeconds = 0;
@@ -130,7 +131,7 @@ public class MazeGame extends JFrame {
             }
         });
 
-        // AI 이동 타이머 (0.5초마다)
+        // AI 이동 타이머 (1초마다)
         aiTimer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -141,7 +142,7 @@ public class MazeGame extends JFrame {
                 }
             }
         });
-
+//        트랩 타이머
         trapTimer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

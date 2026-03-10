@@ -27,7 +27,6 @@ private final String path = "/Users/user/Desktop/secu_result/secu_exten/src/secu
 - 윈도우 환경의 절대 경로가 하드코딩되어 있음
 - macOS에서는 `/Users/user/...` 경로가完全不同하여 파일을 저장할 수 없음
 - 다른 PC에서도 사용 불가
-
 #### 수정 내용
 ```java
 // 수정 후
