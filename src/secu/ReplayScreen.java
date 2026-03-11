@@ -76,9 +76,9 @@ public class ReplayScreen extends JFrame {
         System.out.println("=== hasReplayFiles 결과 ===");
         if (files != null) {
             System.out.println("총 파일 개수: " + files.length);
-            for (File f : files) {
-                System.out.println("- " + f.getName());
-            }
+//            for (File f : files) {
+//                System.out.println("- " + f.getName());
+//            }
         } else {
             System.out.println("files가 null!");
         }
@@ -109,7 +109,7 @@ public class ReplayScreen extends JFrame {
             panel.add(Box.createVerticalStrut(10));
 
             for (File file : files) {
-                System.out.println("버튼 생성: " + file.getName());  // 추가
+//                System.out.println("버튼 생성: " + file.getName());  // 추가
 
                 JButton fileButton = new JButton(file.getName());
                 fileButton.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
