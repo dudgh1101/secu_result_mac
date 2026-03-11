@@ -81,13 +81,6 @@ public class Generator extends JFrame {
                 testMaze[row][col] = 4;
             }
         }
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                System.out.print(testMaze[row][col]);
-            }
-            System.out.println();
-        }
-
         container.revalidate();
         container.repaint();
     }
@@ -145,12 +138,12 @@ public class Generator extends JFrame {
             paintCellAndRefresh(nx, ny, Color.WHITE);
             paintCellAndRefresh(x + direction[0], y + direction[1], Color.WHITE);
 
-            for (int row = 0; row < rows; row++) {
-                for (int col = 0; col < cols; col++) {
-                    System.out.print(testMaze[row][col]);
-                }
-                System.out.println();
-                }
+//            for (int row = 0; row < rows; row++) {
+//                for (int col = 0; col < cols; col++) {
+//                    System.out.print(testMaze[row][col]);
+//                }
+//                System.out.println();
+//                }
 
 
                 dfs(nx, ny);

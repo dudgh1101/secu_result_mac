@@ -91,15 +91,15 @@ public class ReplayScreen extends JFrame {
         File[] files = dir.listFiles((d, name) -> name.startsWith("game_save") && name.endsWith(".txt"));
 
         // 찾은 파일 개수 출력
-        System.out.println("=== showReplayList 결과 ===");
-        if (files != null) {
-            System.out.println("총 파일 개수: " + files.length);
-            for (File f : files) {
-                System.out.println("- " + f.getName());
-            }
-        } else {
-            System.out.println("files가 null!");
-        }
+//        System.out.println("=== showReplayList 결과 ===");
+//        if (files != null) {
+//            System.out.println("총 파일 개수: " + files.length);
+//            for (File f : files) {
+//                System.out.println("- " + f.getName());
+//            }
+//        } else {
+//            System.out.println("files가 null!");
+//        }
 
 
 

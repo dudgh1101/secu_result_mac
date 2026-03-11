@@ -30,8 +30,9 @@ public class MazeGame extends JFrame {
     Timer itemTimer;
     Timer trapTimer;
 
-    int gameSeconds = 0;  // 경과 시간
+    int gameSeconds = 0;
     int aiGameSeconds = 0;
+    long gameStartTime;
 
     // 리플레이 저장 경로 (플랫폼 독립적)
     private final StringBuffer buffer = new StringBuffer();
@@ -89,7 +90,6 @@ public class MazeGame extends JFrame {
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[i].length; j++) {
                 buffer.append(maze[i][j]);
-                System.out.print(maze[i][j]);
             }
             System.out.println();
         }
@@ -132,7 +132,7 @@ public class MazeGame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 gameSeconds++;
-                System.out.println("게임 시간: " + gameSeconds + "초");
+//                System.out.println("게임 시간: " + gameSeconds + "초");
             }
         });
 
@@ -155,11 +155,11 @@ public class MazeGame extends JFrame {
 
                 if(player1.isHastrap()){
                     player1.setTrapcountdown(player1.getTrapcountdown()-1);
-                    System.out.println("P1 트랩해제까지 남은 시간: " + player1.getTrapcountdown());
+//                    System.out.println("P1 트랩해제까지 남은 시간: " + player1.getTrapcountdown());
 
                     if (player1.getTrapcountdown() <= 0) {
                         player1.setHastrap(false);
-                        System.out.println("P1 트랩헤제");
+//                        System.out.println("P1 트랩헤제");
                     } else {
                         anyActive = true;
                     }
@@ -168,11 +168,11 @@ public class MazeGame extends JFrame {
 
                 if(player2.isHastrap()){
                     player2.setTrapcountdown(player2.getTrapcountdown()-1);
-                    System.out.println("P2 트랩해제까지 남은 시간: " + player2.getTrapcountdown());
+//                    System.out.println("P2 트랩해제까지 남은 시간: " + player2.getTrapcountdown());
 
                     if (player2.getTrapcountdown() <= 0) {
                         player2.setHastrap(false);
-                        System.out.println("P2 트랩헤제");
+//                        System.out.println("P2 트랩헤제");
                     } else {
                         anyActive = true;
                     }
@@ -197,12 +197,12 @@ public class MazeGame extends JFrame {
                 // 플레이어1 체크
                 if (player1.isItemActive()) {
                     player1.setItemTimeLeft(player1.getItemTimeLeft() - 1);
-                    System.out.println("P1 아이템 남은 시간: " + player1.getItemTimeLeft());
+//                    System.out.println("P1 아이템 남은 시간: " + player1.getItemTimeLeft());
 
                     if (player1.getItemTimeLeft() <= 0) {
                         player1.setItemActive(false);
                         player1.setVisionRange(1);
-                        System.out.println("P1 아이템 효과 종료!");
+//                        System.out.println("P1 아이템 효과 종료!");
                     } else {
                         anyActive = true;
                     }
@@ -211,12 +211,12 @@ public class MazeGame extends JFrame {
                 // 플레이어2(AI) 체크
                 if (player2.isItemActive()) {
                     player2.setItemTimeLeft(player2.getItemTimeLeft() - 1);
-                    System.out.println("P2 아이템 남은 시간: " + player2.getItemTimeLeft());
+//                    System.out.println("P2 아이템 남은 시간: " + player2.getItemTimeLeft());
 
                     if (player2.getItemTimeLeft() <= 0) {
                         player2.setItemActive(false);
                         player2.setVisionRange(1);
-                        System.out.println("P2 아이템 효과 종료!");
+//                        System.out.println("P2 아이템 효과 종료!");
                     } else {
                         anyActive = true;
                     }
@@ -298,7 +298,7 @@ public class MazeGame extends JFrame {
                 ai_buffer.append("e");
                 player2.setArrived(true);
                 player2.setFinishTime(gameSeconds);
-                System.out.println("AI도착: "+aiGameSeconds+"초");
+                System.out.println("[" + gameSeconds + "] AI 도착");
                 aiTimer.stop();
                 checkGameEnd();
                 return;
@@ -380,6 +380,7 @@ public class MazeGame extends JFrame {
                 pr_buffer.append("e");
                 player1.setArrived(true);
                 player1.setFinishTime(gameSeconds);
+                System.out.println("[" + gameSeconds + "] P1 도착");
                 checkGameEnd();
                 return;
             }
@@ -451,7 +452,7 @@ public class MazeGame extends JFrame {
 
 
     void activeTrap(Player player){
-        System.out.println("트랩을 밟았어요");
+        System.out.println("[" + gameSeconds + "] 트랩 밟음");
 
         player.hastrap = true;
         player.trapcountdown = 5;
@@ -462,7 +463,7 @@ public class MazeGame extends JFrame {
     }
 
     void activateItem(Player player){
-        System.out.println("아이템 획득");
+        System.out.println("[" + gameSeconds + "] 아이템 획득");
 
         player.hasItem = true;
         player.countdown =5;
