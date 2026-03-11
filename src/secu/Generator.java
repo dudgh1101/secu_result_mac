@@ -217,6 +217,7 @@ public class Generator extends JFrame {
                 System.out.print(testMaze[row][col]);
             }
             System.out.println();
+
         }
     }
 
