@@ -10,9 +10,9 @@ public class guiTest_swing extends JFrame {
     //키리스너 추가
 
     class gui_panel extends JPanel{
-        //실제 창 안의 값
+        //실제 값
 
-        // 상태창,미로,숫자 표시 등등
-        //값을 넣고 프레임에 넣기
+        // 상태창,미로,숫자 값 추가
+        //값을 추가 및 프레임에 추가
     }
 }
