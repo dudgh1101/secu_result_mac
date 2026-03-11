@@ -55,7 +55,7 @@ public class Generator extends JFrame {
         setSize(cols * cellSize, rows * cellSize);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setVisible(true); //or true
+        setVisible(false); //or true
         init();
         generateMaze();
     }

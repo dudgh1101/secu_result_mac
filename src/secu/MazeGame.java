@@ -611,12 +611,22 @@ public class MazeGame extends JFrame {
 
             if (player1.isItemActive()) {
                 g.setColor(Color.YELLOW);
-                g.drawString("아이템: " + player1.getItemTimeLeft() + "초", textX, textY + lineHeight * 4);
+                g.drawString("pr 아이템: " + player1.getItemTimeLeft() + "초", textX, textY + lineHeight * 4);
                 g.setColor(Color.WHITE);
             }
             if (player1.isHastrap()) {
                 g.setColor(Color.RED);
-                g.drawString("트랩: " + player1.getTrapcountdown() + "초", textX, textY + lineHeight * 5);
+                g.drawString("pr 트랩: " + player1.getTrapcountdown() + "초", textX, textY + lineHeight * 5);
+            }
+
+            if (player2.isItemActive()) {
+                g.setColor(Color.YELLOW);
+                g.drawString("ai 아이템: " + player2.getItemTimeLeft() + "초", textX, textY + lineHeight * 6);
+                g.setColor(Color.WHITE);
+            }
+            if (player2.isHastrap()) {
+                g.setColor(Color.RED);
+                g.drawString("ai 트랩: " + player2.getTrapcountdown() + "초", textX, textY + lineHeight * 7);
             }
         }
 
