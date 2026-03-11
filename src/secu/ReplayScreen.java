@@ -5,6 +5,7 @@ import java.awt.*;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class ReplayScreen extends JFrame {
 

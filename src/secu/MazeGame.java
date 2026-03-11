@@ -11,8 +11,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
 
 public class MazeGame extends JFrame {
+    boolean adminView = false;
+
     int[][] maze;
     GamePanel gamePanel;
 
@@ -48,6 +51,8 @@ public class MazeGame extends JFrame {
 
     private StringBuffer pr_buffer = new StringBuffer();
     private StringBuffer ai_buffer = new StringBuffer();
+
+    HashMap<String, String> dict = new HashMap<>();
 
     public MazeGame(int[][] mazeData){
         this.maze = mazeData;
@@ -150,7 +155,7 @@ public class MazeGame extends JFrame {
 
                 if(player1.isHastrap()){
                     player1.setTrapcountdown(player1.getTrapcountdown()-1);
-                    System.out.println("P1 트랩해제까지 남은 시간: " + player1.getItemTimeLeft());
+                    System.out.println("P1 트랩해제까지 남은 시간: " + player1.getTrapcountdown());
 
                     if (player1.getTrapcountdown() <= 0) {
                         player1.setHastrap(false);
@@ -160,9 +165,10 @@ public class MazeGame extends JFrame {
                     }
                 }
 
+
                 if(player2.isHastrap()){
                     player2.setTrapcountdown(player2.getTrapcountdown()-1);
-                    System.out.println("P2 트랩해제까지 남은 시간: " + player2.getItemTimeLeft());
+                    System.out.println("P2 트랩해제까지 남은 시간: " + player2.getTrapcountdown());
 
                     if (player2.getTrapcountdown() <= 0) {
                         player2.setHastrap(false);
@@ -235,66 +241,72 @@ public class MazeGame extends JFrame {
         int left  = (dir + 3) % 4;
         int back  = (dir + 2) % 4;
 
-        if (moveToPosition(right)) {
-            dir = right;
-        } else if (moveToPosition(dir)) {
-            // 그대로
-        } else if (moveToPosition(left)) {
-            dir = left;
-        } else if (moveToPosition(back)) {
-            dir = back;
-        } else {
-            aiTimer.stop();
-            System.out.println("사방이 막힘");
-            return;
+        if(!player2.hastrap){
+            if (moveToPosition(right)) {
+                dir = right;
+            } else if (moveToPosition(dir)) {
+                // 그대로
+            } else if (moveToPosition(left)) {
+                dir = left;
+            } else if (moveToPosition(back)) {
+                dir = back;
+            } else {
+                aiTimer.stop();
+                System.out.println("사방이 막힘");
+                return;
+            }
+            player2.setDiraction(dir);
+
+            switch (dir){
+                case 0:
+                    ai_buffer.append("↑");
+                    break;
+                case 1:
+                    ai_buffer.append("→");
+                    break;
+                case 2:
+                    ai_buffer.append("↓");
+                    break;
+                case 3:
+                    ai_buffer.append("←");
+                    break;
+            }
+
+            int newRow = player2.getRow() + directions[dir][0];
+            int newCol = player2.getCol() + directions[dir][1];
+
+            maze[player2.getRow()][player2.getCol()] = 3;
+
+            player2.setRow(newRow);
+            player2.setCol(newCol);
+
+            //아이템 체크
+            if (maze[newRow][newCol] == 6) {
+                ai_buffer.append("6");
+                activateItem(player2);  // 아이템 효과 발동
+            }
+            if (maze[newRow][newCol] == 5) {
+                ai_buffer.append("5");
+                activeTrap(player2);
+            }
+            if (maze[newRow][newCol] == 2) {
+                ai_buffer.append("2");
+            }
+
+            //도착 체크
+            if (maze[newRow][newCol] == 9) {
+                ai_buffer.append("e");
+                player2.setArrived(true);
+                player2.setFinishTime(gameSeconds);
+                System.out.println("AI도착: "+aiGameSeconds+"초");
+                aiTimer.stop();
+                checkGameEnd();
+                return;
+            }
+
+            // 새 위치를 플레이어2로
+            maze[newRow][newCol] = 2;
         }
-        player2.setDiraction(dir);
-
-        switch (dir){
-            case 0:
-                ai_buffer.append("↑");
-                break;
-            case 1:
-                ai_buffer.append("→");
-                break;
-            case 2:
-                ai_buffer.append("↓");
-                break;
-            case 3:
-                ai_buffer.append("←");
-                break;
-        }
-
-        int newRow = player2.getRow() + directions[dir][0];
-        int newCol = player2.getCol() + directions[dir][1];
-
-        maze[player2.getRow()][player2.getCol()] = 3;
-
-        player2.setRow(newRow);
-        player2.setCol(newCol);
-
-        //아이템 체크
-        if (maze[newRow][newCol] == 6) {
-            ai_buffer.append("6");
-            activateItem(player2);  // 아이템 효과 발동
-        }
-        if (maze[newRow][newCol] == 2) {
-            ai_buffer.append("2");
-        }
-
-        //도착 체크
-        if (maze[newRow][newCol] == 9) {
-            ai_buffer.append("e");
-            player2.setArrived(true);
-            player2.setFinishTime(gameSeconds);
-            System.out.println("AI도착: "+aiGameSeconds+"초");
-            aiTimer.stop();
-            checkGameEnd();
-            return;
-        }
-
-        // 새 위치를 플레이어2로
-        maze[newRow][newCol] = 2;
 
     }
     boolean moveToPosition(int newDir) {
@@ -336,7 +348,7 @@ public class MazeGame extends JFrame {
                 pr_buffer.append("→");
                 break;
             case KeyEvent.VK_R:
-                activateItem(player2);
+                adminView = !adminView;
                 trapTimer.stop();
                 break;
             default:
@@ -501,25 +513,77 @@ public class MazeGame extends JFrame {
                     boolean isVisible = isInFogRange(i, j, player1)
                             || isInFogRange(i, j, player2);
 
-                    if(!isVisible){
-                        g.setColor(new Color(100, 100, 100));
-                        g.fillRect(x, y, cellSize, cellSize);
-                        g.setColor(Color.GRAY);
-                        g.drawRect(x, y, cellSize, cellSize);
-                        g.setColor(Color.WHITE);
-                        g.setFont(new Font("Arial", Font.BOLD, cellSize / 3));
-                        g.drawString("?", x + cellSize/3, y + cellSize/2 + 5);
+                    if (!adminView) {
+                        if (!isVisible) {
+                            g.setColor(new Color(100, 100, 100));
+                            g.fillRect(x, y, cellSize, cellSize);
+                            g.setColor(Color.GRAY);
+                            g.drawRect(x, y, cellSize, cellSize);
+                            g.setColor(Color.WHITE);
+                            g.setFont(new Font("Arial", Font.BOLD, cellSize / 3));
+                            g.drawString("?", x + cellSize / 3, y + cellSize / 2 + 5);
+                        } else {
+                            switch (maze[i][j]) {
+                                case 0:
+                                    g.setColor(Color.GREEN);
+                                    break;
+                                case 1:
+                                    g.setColor(Color.BLUE);
+                                    break;
+                                case 2:
+                                    g.setColor(Color.ORANGE);
+                                    break;
+                                case 3:
+                                    g.setColor(Color.WHITE);
+                                    break;
+                                case 4:
+                                    g.setColor(Color.BLACK);
+                                    break;
+                                case 5:
+                                    g.setColor(Color.GREEN);
+                                    break;
+                                case 6:
+                                    g.setColor(Color.YELLOW);
+                                    break;
+                                case 9:
+                                    g.setColor(Color.RED);
+                                    break;
+                                default:
+                                    g.setColor(Color.GRAY);
+                            }
+
+                            g.fillRect(x, y, cellSize, cellSize);
+                            g.setColor(Color.GRAY);
+                            g.drawRect(x, y, cellSize, cellSize);
+                        }
                     } else {
                         switch (maze[i][j]) {
-                            case 0: g.setColor(Color.GREEN); break;
-                            case 1: g.setColor(Color.BLUE); break;
-                            case 2: g.setColor(Color.ORANGE); break;
-                            case 3: g.setColor(Color.WHITE); break;
-                            case 4: g.setColor(Color.BLACK); break;
-                            case 5: g.setColor(Color.GREEN); break;
-                            case 6: g.setColor(Color.YELLOW); break;
-                            case 9: g.setColor(Color.RED); break;
-                            default: g.setColor(Color.GRAY);
+                            case 0:
+                                g.setColor(Color.GREEN);
+                                break;
+                            case 1:
+                                g.setColor(Color.BLUE);
+                                break;
+                            case 2:
+                                g.setColor(Color.ORANGE);
+                                break;
+                            case 3:
+                                g.setColor(Color.WHITE);
+                                break;
+                            case 4:
+                                g.setColor(Color.BLACK);
+                                break;
+                            case 5:
+                                g.setColor(Color.GREEN);
+                                break;
+                            case 6:
+                                g.setColor(Color.YELLOW);
+                                break;
+                            case 9:
+                                g.setColor(Color.RED);
+                                break;
+                            default:
+                                g.setColor(Color.GRAY);
                         }
 
                         g.fillRect(x, y, cellSize, cellSize);
@@ -528,7 +592,6 @@ public class MazeGame extends JFrame {
                     }
                 }
             }
-
             // 상태 UI 배경 (미로 아래 중앙)
             g.setColor(new Color(0, 0, 0, 180));
             g.fillRect(uiX, uiY, uiWidth, uiHeight);
