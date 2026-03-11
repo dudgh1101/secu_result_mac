@@ -9,7 +9,7 @@ public class Player {
     private int finishTime;
 
     int countdown = 0;
-    int range = 1;
+    int range = 1; //시야범위
     boolean hasItem = false;
 
 
