@@ -47,15 +47,18 @@ public class Generator extends JFrame {
     public Generator(int rows, int cols, int cellSize) {
         this.rows = rows;
         this.cols = cols;
+
         this.testMaze = new int[rows][cols];
         this.maze = new boolean[rows][cols];
         this.cells = new JPanel[rows][cols];
+
+
 
         setTitle("Maze Generator");
         setSize(cols * cellSize, rows * cellSize);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setVisible(false); //or true
+        setVisible(true); //or true
         init();
         generateMaze();
     }
@@ -95,7 +98,6 @@ public class Generator extends JFrame {
         else if (color == Color.WHITE) {
             testMaze[row][col] = 3;
         }
-
         container.revalidate();
         container.repaint();
     }
